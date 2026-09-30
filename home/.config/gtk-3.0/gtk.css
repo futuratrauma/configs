@@ -1,0 +1,22 @@
+/* User GTK3 overrides (2026-09-30) — phthalo green accent to match the rice.
+   Replaces the KDE-era `@import 'colors.css'` (colors.css kept on disk, inert). */
+
+/* Adwaita selection colors */
+@define-color theme_selected_bg_color #04bf9d;
+@define-color theme_selected_fg_color #0a0f0d;
+
+/* Accent aliases (used by newer widgets / libadwaita-styled bits) */
+@define-color accent_color #04bf9d;
+@define-color accent_bg_color #04bf9d;
+@define-color accent_fg_color #0a0f0d;
+
+/* Links follow the accent */
+@define-color link_color #04bf9d;
+@define-color theme_unfocused_selected_bg_color alpha(#04bf9d, 0.6);
+
+/* Thunar file view background — lighter than the window so folder icons read
+   against it (Breeze-Dark view bg was ~same value as the Noir folder fill). */
+iconview, treeview, .view {
+  background-color: #2d3439;
+}
+

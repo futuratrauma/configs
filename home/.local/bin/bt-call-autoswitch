@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Watch for any running capture stream = "on a call": flip WH-CH720N to HFP, back to A2DP when it ends.
+# Marker file marks watcher-owned switches so manual (bar) toggles are never overridden.
+set -u
+export PATH="/usr/bin:/bin:$HOME/.local/bin"
+BT="$HOME/.local/bin/bt-profile-set"
+MARKER="$HOME/.local/state/bt-call-autoswitch.active"
+
+mic_streams() {
+  # Exclude: internal bluez/loopback nodes; the noctalia visualizer monitor tap (passive capture,
+  # name=noctalia — verified on the wire; media.category=Capture is NOT usable, pw-record sets it too).
+  # Real call mics are non-passive (pw-record: passive unset).
+  pw-dump 2>/dev/null | jq '[.[] | .info | select(.state == "running") | .props
+    | select(.["media.class"] == "Stream/Input/Audio")
+    | select(.["node.passive"] == true | not)
+    | select((.["node.name"] // "") | test("^(bluez_capture_internal|loopback-|noctalia$)") | not)] | length' 2>/dev/null
+}
+go_call()  { : > "$MARKER"; "$BT" call; }
+go_music() { rm -f "$MARKER"; "$BT" music; }
+
+# startup reconcile: marker left over from a crash + no mic -> restore music
+if [ -e "$MARKER" ] && [ "$("$BT" status)" = "headset-head-unit" ] && [ "$(mic_streams)" = "0" ]; then
+  go_music
+fi
+
+active=0
+while :; do
+  prof=$("$BT" status 2>/dev/null) || { sleep 2; continue; }
+  n=$(mic_streams)
+  case "$n" in ''|*[!0-9]*) sleep 1.2; continue ;; esac
+  if [ "$n" -ge 1 ]; then
+    case "$prof" in
+      headset-head-unit*) active=1 ;;
+      a2dp*)              [ "$active" -eq 0 ] && { go_call; active=1; } ;;
+    esac
+  else
+    if [ "$active" -eq 1 ]; then go_music; active=0; fi
+    if [ -e "$MARKER" ] && [ "$prof" = "headset-head-unit" ]; then go_music; fi
+  fi
+  sleep 1.2
+done

@@ -1,0 +1,6 @@
+[credential]
+	useHttpPath = false
+	helper = store
+[user]
+	name = Your Name
+	email = you@example.com

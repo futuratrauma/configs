@@ -1,0 +1,13 @@
+autologin.blob=REDACTED
+autologin.canonical_username=REDACTED
+autologin.saved_credentials=REDACTED
+app.window.state.saved=true
+app.window.position.width=1920
+es.send-on-startup=true
+core.clock_delta=-25
+storage.last-location="/home/YOURUSER/.cache/spotify/Storage"
+autologin.username=REDACTED
+app.window.state=2
+app.window.position.saved=true
+app.window.position.height=1200
+app.last-launched-version="1.2.95.453.g0eeebbed"

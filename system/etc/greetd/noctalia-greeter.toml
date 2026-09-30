@@ -1,0 +1,8 @@
+[terminal]
+vt = 7
+
+# The default session, also known as the greeter.
+[default_session]
+command = "/usr/bin/noctalia-greeter-session"
+user = "_greetd"
+
