@@ -1,0 +1,23 @@
+# BT Call Profile — shows WH-CH720N audio profile (A2DP/HFP) as text; left-click toggles.
+id = "ivan/bt-call-profile"
+name = "BT Call Profile"
+version = "0.2.0"
+plugin_api = 18
+author = "ivan"
+license = "MIT"
+icon = "headphones"
+description = "Music/Call profile indicator for the Sony WH-CH720N."
+tags = ["audio", "bar", "hardware"]
+dependencies = ["bash", "pactl"]
+
+[[widget]]
+id = "bt-call-profile"
+entry = "widget.luau"
+
+  [widget.actions]
+  left = "plugin ivan/bt-call-profile:service all toggle"
+  right = "plugin ivan/bt-call-profile:service all resync"
+
+[[service]]
+id = "service"
+entry = "service.luau"

@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# WH-CH720N A2DP (music) <-> HFP (call) profile switcher.
+# usage: bt-profile-set status|call|music|toggle [restore-profile]
+set -u
+MAC="40:72:18:7A:F8:31"
+CARD="bluez_card.${MAC//:/_}"
+BACKUP="$HOME/.local/state/bt-profile-backup"
+export PATH="/usr/bin:/bin:$HOME/.local/bin"
+
+profile() {
+  pactl list cards 2>/dev/null | awk -v card="$CARD" '
+    $1 == "Name:" { in_card = ($2 == card) }
+    in_card && $1 == "Active" && $2 == "Profile:" { print $3; exit }'
+}
+has_card() { pactl list cards short 2>/dev/null | grep -qw "$CARD"; }
+
+node_id_by_name() { # $1 exact node name
+  pw-dump 2>/dev/null | jq -r --arg n "$1" \
+    '[.[] | .info.props | select(.["node.name"] == $n) | .["node.id"]] | .[0] // empty'
+}
+first_matching() { # $1 regex on node.name, returns first name
+  pw-dump 2>/dev/null | jq -r --arg r "$1" \
+    '[.[] | .info.props | select((.["node.name"] // "") | test($r)) | .["node.name"]] | .[0] // empty'
+}
+first_alsa_src() {
+  pw-dump 2>/dev/null | jq -r '[.[] | .info.props
+    | select(.["media.class"] == "Audio/Source")
+    | select((.["node.name"] // "") | startswith("alsa_input")) | .["node.name"]] | .[0] // empty'
+}
+
+retarget_streams() { # $1 old node id, $2 new node id: move input streams off a dead node
+  [ -n "${1:-}" ] && [ -n "${2:-}" ] && [ "$1" != "$2" ] || return 0
+  pw-dump 2>/dev/null | jq -r --arg old "$1" '.[] | select(.type == "Link")
+    | .info.props | select((.["link.output.node"] | tostring) == $old) | .["link.input.node"]' \
+  | while read -r sid; do
+      wpctl set-param "$sid" target.object "$2" 2>/dev/null
+    done
+}
+
+go_call() {
+  local old_sink old_src bsink bsrc old_id new_id i
+  old_sink=$(pactl get-default-sink 2>/dev/null)
+  old_src=$(pactl get-default-source 2>/dev/null)
+  printf '%s\n%s\n' "${old_sink:-}" "${old_src:-}" > "$BACKUP"
+  pactl set-card-profile "$CARD" headset-head-unit || return 1
+  for i in $(seq 1 12); do
+    [ -n "$(first_matching "^bluez_input\.")" ] && [ -n "$(first_matching "^bluez_output\.")" ] && break
+    sleep 0.5
+  done
+  bsink=$(first_matching "^bluez_output\.")
+  bsrc=$(first_matching "^bluez_input\.")
+  [ -n "$bsink" ] && pactl set-default-sink "$bsink" 2>/dev/null
+  [ -n "$bsrc" ] && pactl set-default-source "$bsrc" 2>/dev/null
+  # follow-along: any running input stream that was on the old mic moves to the headset mic
+  old_id=$(node_id_by_name "${old_src:-}")
+  new_id=$(node_id_by_name "$bsrc")
+  retarget_streams "$old_id" "$new_id"
+  echo headset-head-unit
+}
+
+go_music() {
+  local target="${1:-a2dp-sink}" old_sink="" old_src="" nsink nsrc dead new_id
+  if [ -s "$BACKUP" ]; then
+    old_sink=$(sed -n 1p "$BACKUP"); old_src=$(sed -n 2p "$BACKUP")
+  fi
+  pactl set-card-profile "$CARD" "$target" 2>/dev/null \
+    || pactl set-card-profile "$CARD" a2dp-sink || return 1
+  nsink="$old_sink"
+  case "$nsink" in ""|bluez_input*) nsink=$(first_matching "^bluez_output\.") ;; esac
+  [ -n "$nsink" ] && pactl set-default-sink "$nsink" 2>/dev/null
+  # stale rule: a bluez_* mic name is a dead ghost under A2DP -> use a real alsa source
+  nsrc="$old_src"
+  case "$nsrc" in ""|bluez_*) nsrc=$(first_alsa_src) ;; esac
+  [ -n "$nsrc" ] && pactl set-default-source "$nsrc" 2>/dev/null
+  dead=$(pw-dump 2>/dev/null | jq -r '[.[] | .info.props
+    | select(.["media.class"] == "Audio/Source")
+    | select((.["node.name"] // "") | startswith("bluez_input")) | .["node.id"]] | .[0] // empty')
+  new_id=$(node_id_by_name "$nsrc")
+  retarget_streams "$dead" "$new_id"
+  profile
+}
+
+cmd="${1:-status}"
+case "$cmd" in
+  status) if has_card; then profile; else echo no-card; fi ;;
+  call)   has_card || { echo no-card; exit 1; }; go_call ;;
+  music)  has_card || { echo no-card; exit 1; }; go_music "${2:-}" ;;
+  toggle)
+    has_card || { echo no-card; exit 1; }
+    case "$(profile)" in
+      headset-head-unit*) go_music "${2:-}" ;;
+      *) go_call ;;
+    esac ;;
+  *) echo "usage: $0 status|call|music|toggle [restore-profile]" >&2; exit 2 ;;
+esac

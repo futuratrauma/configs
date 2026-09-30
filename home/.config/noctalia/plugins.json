@@ -1,0 +1,16 @@
+{
+  "sources": [
+    {
+      "enabled": true,
+      "name": "Noctalia Plugins",
+      "url": "https://github.com/noctalia-dev/noctalia-plugins"
+    },
+    {
+      "enabled": true,
+      "name": "local",
+      "url": "file:///home/ivan/.local/share/noctalia-plugins-local"
+    }
+  ],
+  "states": {},
+  "version": 2
+}

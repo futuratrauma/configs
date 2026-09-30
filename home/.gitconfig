@@ -1,0 +1,6 @@
+[credential]
+	useHttpPath = false
+	helper = store
+[user]
+	name = Ivan Vezhnavets
+	email = ivan.vezhnavets@regula.us

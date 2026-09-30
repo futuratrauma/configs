@@ -1,0 +1,11 @@
+[Unit]
+Description=WH-CH720N call-profile autoswitch (A2DP <-> HFP on mic activity)
+After=pipewire.service wireplumber.service
+
+[Service]
+ExecStart=%h/.local/bin/bt-call-autoswitch
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

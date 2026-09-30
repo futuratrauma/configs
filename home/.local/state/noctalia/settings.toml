@@ -1,0 +1,343 @@
+config_version = 14
+
+[audio]
+enable_overdrive = true
+sound_volume = 0.40000000000000002
+
+[bar.default.monitor.DP-1]
+enabled = false
+radius = 0
+
+[bar.default.monitor.HDMI-A-2]
+background_opacity = 0.72999998368322849
+capsule = true
+concave_edge_corners = false
+contact_shadow = true
+end = [
+    "sony_headphones",
+    "media",
+    "tray",
+    "notifications",
+    "clipboard",
+    "keyboard_layout",
+    "network",
+    "bluetooth",
+    "volume",
+    "bt-call-profile",
+    "battery",
+    "sysmon",
+    "control-center",
+    "session"
+]
+font_scale = 0.79999998956918716
+margin_ends = 0
+radius = 15
+start = [ "cat", "launcher", "notes", "nightlight" ]
+thickness = 24
+
+[calendar]
+enabled = true
+
+[dock]
+active_monitor_only = true
+auto_hide = true
+enabled = true
+launcher_icon = "cat"
+launcher_position = "start"
+layer = "overlay"
+monitors = [ "HDMI-A-2" ]
+pinned = [ "zen", "zcode", "kitty", "cursor", "spotify", "dev.zed.Zed", "org.kde.dolphin" ]
+position = "left"
+reserve_space = false
+show_dots = true
+
+[idle]
+behavior_order = [ "lock", "screen-off", "lock-and-suspend" ]
+pre_action_fade_seconds = 15
+
+    [idle.behavior.lock]
+    action = "lock"
+    enabled = true
+    timeout = 600.0
+
+    [idle.behavior.lock-and-suspend]
+    action = "lock_and_suspend"
+    enabled = false
+    timeout = 900.0
+
+    [idle.behavior.screen-off]
+    action = "screen_off"
+    enabled = false
+    timeout = 660.0
+
+[location]
+auto_locate = true
+
+[lockscreen_widgets]
+enabled = false
+schema_version = 2
+widget_order = [
+    "lockscreen-login-box@HEADLESS-4",
+    "lockscreen-login-box@HEADLESS-3",
+    "lockscreen-login-box@HEADLESS-2",
+    "lockscreen-login-box@HDMI-A-2",
+    "lockscreen-login-box@DP-1"
+]
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 960.0
+    cy = 1018.0
+    output = "DP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-2"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 960.0
+    cy = 1018.0
+    output = "HDMI-A-2"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-2".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@HEADLESS-2"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 480.0
+    cy = 358.0
+    output = "HEADLESS-2"
+    placement_height = 540.0
+    placement_width = 960.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@HEADLESS-2".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@HEADLESS-3"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 480.0
+    cy = 358.0
+    output = "HEADLESS-3"
+    placement_height = 540.0
+    placement_width = 960.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@HEADLESS-3".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@HEADLESS-4"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 480.0
+    cy = 358.0
+    output = "HEADLESS-4"
+    placement_height = 540.0
+    placement_width = 960.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@HEADLESS-4".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+[notification]
+monitors = [ "DP-1" ]
+position = "top_right"
+
+[plugin_settings."noctalia/wallhaven"]
+api_key = ""  # scrubbed from repo 2026-09-30 — re-enter your wallhaven key
+
+[plugins]
+enabled = [
+    "dotnetrob/cat",
+    "vn1k/cursor",
+    "yocraft/desktop-launcher",
+    "blackbartblues/keymap",
+    "tordex/processes",
+    "estvoid/sony_headphones",
+    "tmelik/system-monitor",
+    "cleboost/zed-provider",
+    "icefish/phone-connect",
+    "azokyen/spotify-media",
+    "kenn/keybind-cheatsheet",
+    "srounce/systemd",
+    "zyrex/run-path",
+    "thaer99ob/default-apps",
+    "noctalia/wallhaven",
+    "noctalia/notes",
+    "ivan/bt-call-profile"
+]
+
+    [[plugins.source]]
+    kind = "git"
+    location = "https://github.com/noctalia-dev/official-plugins"
+    name = "official"
+
+    [[plugins.source]]
+    kind = "git"
+    location = "https://github.com/noctalia-dev/community-plugins"
+    name = "community"
+
+    [[plugins.source]]
+    kind = "path"
+    location = "/home/ivan/.local/share/noctalia-plugins-local"
+    name = "local"
+
+[shell]
+panel_anchor_bar = "default"
+settings_show_advanced = false
+
+    [shell.launcher]
+    app_grid = true
+    show_app_actions = true
+
+    [shell.panel]
+    list_item_background = true
+    open_near_click_wallpaper = true
+    transparency_mode = "glass"
+
+    [shell.screenshot]
+    confirm_region = true
+    remember_last_region = true
+    show_cursor = true
+
+    [shell.session]
+    grid = true
+
+[theme]
+builtin = "Ayu"
+community_palette = "Ayu Green"
+mode = "dark"
+shell_mode = "dark"
+source = "community"
+wallpaper_scheme = "m3-content"
+
+    [theme.templates]
+    builtin_ids = [ "btop" ]
+    community_ids = [ "brave", "fuzzel" ]
+
+[wallpaper.default]
+path = "/home/ivan/Pictures/wallhaven-p8j8je.jpg"
+
+[wallpaper.last]
+path = "/home/ivan/Pictures/wallhaven-p8j8je.jpg"
+
+[wallpaper.monitors.DP-1]
+path = "/home/ivan/Pictures/wallhaven-p8j8je.jpg"
+
+[wallpaper.monitors.HDMI-A-2]
+path = "/home/ivan/Pictures/wallhaven-p8j8je.jpg"
+
+[widget.bt-call-profile]
+type = "ivan/bt-call-profile:bt-call-profile"
+
+[widget.cat]
+cat_color = "primary"
+cat_color_mode = "custom"
+cat_size = 48
+show_cpu_percent = true
+type = "dotnetrob/cat:cat"
+walk_threshold = 11
+
+[widget.media]
+font_scale = 0.90000000000000013
+max_length = 254
+scale = 1.1000000000000001
+show_progress = true
+
+[widget.notes]
+type = "noctalia/notes:notes"
+
+[widget.sony_headphones]
+type = "estvoid/sony_headphones:sony_headphones"
+
+[widget.volume]
+custom_image_colorize = true
+
+    [widget.volume.actions]
+    middle = "exec /home/ivan/.local/bin/bt-profile-set toggle"
+    right = "volume-mute"

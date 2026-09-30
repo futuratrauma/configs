@@ -1,0 +1,17 @@
+#!/bin/sh
+# sudo/pkexec askpass that prompts inside a fresh kitty window.
+# Replaces the kdialog-based kdaskpass after the KDE purge (2026-09-30).
+# The child kitty writes the password to a temp file; we cat it on stdout
+# so sudo receives it via SUDO_ASKPASS. Env needs WAYLAND_DISPLAY set.
+f="$(mktemp /tmp/kitty-askpass.XXXXXXXX)" || exit 1
+trap 'rm -f "$f"' EXIT INT TERM
+: > "$f"
+kitty --title "Authorization" sh -c '
+    stty -echo 2>/dev/null
+    printf "[sudo] password: "
+    IFS= read -r p
+    stty echo 2>/dev/null
+    printf "%s" "$p" >"$1"
+    printf "\n" >&2
+' sh "$f"
+cat "$f"

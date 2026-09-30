@@ -1,0 +1,285 @@
+# Umbriel configuration — ported from ~/.config/hypr/hyprland.lua (2026-09-28).
+# Reference: https://docs.noctalia.dev/umbriel/
+# Validate with: umbriel validate   (live reload on save once umbriel runs)
+
+[general]
+# start-umbriel already wires dbus/systemd environment (replaces the old
+# dbus-update-activation-environment / systemctl import-environment hooks).
+# Wallpaper: the noctalia shell owns it; hyprpaper (Hyprland-only) is not started.
+autostart = [
+    # noctalia 5.2 SIGSEGVs in window-switcher (coredump 2026-09-29 12:03) —
+    # run it under an auto-restarting transient unit so a crash self-heals.
+    "systemd-run --user --collect --unit=noctalia -p Restart=on-failure -p RestartSec=1 -E XDG_RUNTIME_DIR=/run/user/1000 -E WAYLAND_DISPLAY=wayland-0 -E DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus /usr/bin/noctalia",
+    # X11 purged 2026-09-29 (xwayland-satellite + DISPLAY autostart removed;
+    # Spotify got --ozone-platform=wayland, AnyDesk uninstalled).
+    "sh -c 'wl-paste --type text  --watch cliphist store'",
+    "sh -c 'wl-paste --type image --watch cliphist store'",
+    # Daily drivers. Placement comes from the [[window_rule]] block at the bottom,
+    # so these open on their own workspace instead of stacking on ws 1.
+    # DBus address is inlined because umbriel spawn: children get a stripped env.
+    "sh -c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus exec /usr/local/bin/zen'",
+    "sh -c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus exec /home/ivan/.local/bin/zed'",
+    "sh -c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus exec /usr/bin/zcode'",
+    "sh -c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus exec /usr/bin/slack'",
+    "sh -c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus exec /usr/bin/kitty'",
+]
+show_cheatsheet = false
+xwayland = false          # X11 fully removed 2026-09-29
+focus_on_activate = true   # apps raising an existing window (thunar hand-off etc.) take focus
+
+# ---- Monitors (mirrors the Hyprland lua layout) ----
+[output.HDMI-A-2]
+position = [0, 0]
+
+[output.DP-1]
+position = [1920, 0]
+
+# VNC/remote-desktop virtual output (created by ~/bin/remote-desktop via
+# `umbriel output-create stream`).
+[output.stream]
+mode = "1920x1080@60"
+position = [-1920, 0]
+
+# ---- Environment (was hl.env(...) in hyprland.lua; PATH comes from the
+# login profile that start-umbriel sources, so no need to touch it here) ----
+[environment]
+XCURSOR_THEME = "material_dark_yellow_cursors"
+XCURSOR_SIZE = "24"
+QT_QPA_PLATFORMTHEME = "kde"
+# GTK_THEME removed 2026-09-30: it hard-overrode every GTK theme setting
+# (dconf/settings.ini) session-wide. Theme now = gsettings (Breeze-Dark).
+
+# ---- Appearance (hyprland: rounding 16, borderless, blur, shadow) ----
+[appearance]
+border_width = 0
+outer_border_width = 0
+corner_radius = 16
+
+[appearance.shadow]
+enabled = true
+
+[appearance.blur]
+enabled = true
+
+# ---- Input ----
+[input.keyboard]
+layout = "us,by,by"
+variant = ",,ru"
+options = "grp:alt_shift_toggle"
+
+[input.focus]
+follows_mouse = true          # hyprland follow_mouse = 1
+
+[input.cursor]
+theme = "material_dark_yellow_cursors"
+size = 24
+
+# ---- Layout (was hyprland dwindle; scrolling columns since 2026-09-29) ----
+[layout]
+mode = "scrolling"
+gap = 8                       # hyprland gaps_in 5 / gaps_out 10 -> single gap
+
+# ---- Keybinds (defines the complete set; Mod = Super) ----
+[keybinds]
+
+# Applications and session
+"Mod+Q"      = { action = "spawn:kitty", repeat = false }
+"Mod+Return" = { action = "spawn:kitty", repeat = false }
+"Mod+E"      = { action = "spawn:dolphin", repeat = false }
+"Mod+R"      = { action = "spawn:fuzzel", repeat = false }
+"Mod+C"      = { action = "window-close", repeat = false }
+"Mod+M"      = "session-quit"
+"Mod+Escape" = "session-quit"
+
+# Noctalia shell surfaces (Super-space launcher, Super-comma settings, Super-s panel)
+"Mod"          = { action = "spawn:noctalia msg window-switcher", repeat = false }  # modifier-only binds fire on release
+"Mod+Space"    = "keyboard-layout-next"  # layout switcher (launcher: Super+R/fuzzel)
+"Mod+Comma"    = { action = "spawn:noctalia msg settings-toggle", repeat = false }
+"Mod+S"        = { action = "spawn:noctalia msg panel-toggle control-center", repeat = false }
+"Mod+L"        = { action = "spawn:noctalia msg session lock", repeat = false }
+"ALT+Tab"      = { action = "spawn:noctalia msg window-switcher", repeat = true }
+
+# Window state
+"Mod+V"  = { action = "window-toggle-floating", repeat = false }
+"Mod+P"  = { action = "window-toggle-pinned", repeat = false }        # pin above (hyprland pseudo->closest match)
+"Mod+F"  = { action = "window-toggle-fullscreen", repeat = false }
+"Mod+Shift+F" = { action = "window-toggle-maximize-to-edges", repeat = false }
+"Mod+J" = { action = "workspace-set-layout:toggle", repeat = false }  # was dwindle togglesplit
+
+# Focus (was Mod+arrows)
+"Mod+Left"  = "window-focus-or-output-left"
+"Mod+Right" = "window-focus-or-output-right"
+"Mod+Up"    = "window-focus-or-output-up"
+"Mod+Down"  = "window-focus-or-output-down"
+
+# Move windows (was Mod+Shift+arrows; column moves in dwindle = swap)
+"Mod+Shift+Left"  = "window-move-or-output-left"
+"Mod+Shift+Right" = "window-move-or-output-right"
+"Mod+Shift+Up"    = "window-move-up"
+"Mod+Shift+Down"  = "window-move-down"
+
+# Workspace overview (macOS Mission Control analogue)
+"Mod+W" = "overview-toggle"
+
+# Monitor focus + cross-monitor move (was Mod+Ctrl / Mod+Ctrl+Shift+arrows)
+"Mod+Ctrl+Left"       = "output-focus-previous"
+"Mod+Ctrl+Right"      = "output-focus-next"
+"Mod+Ctrl+Shift+Left"  = "window-move-to-output-left"
+"Mod+Ctrl+Shift+Right" = "window-move-to-output-right"
+
+# Workspaces 1-9 and 0->10 (was focus / shift-move per number)
+"Mod+1" = "workspace-switch:1"
+"Mod+2" = "workspace-switch:2"
+"Mod+3" = "workspace-switch:3"
+"Mod+4" = "workspace-switch:4"
+"Mod+5" = "workspace-switch:5"
+"Mod+6" = "workspace-switch:6"
+"Mod+7" = "workspace-switch:7"
+"Mod+8" = "workspace-switch:8"
+"Mod+9" = "workspace-switch:9"
+"Mod+0" = "workspace-switch:10"
+"Mod+Shift+1" = "window-move-to-workspace:1"
+"Mod+Shift+2" = "window-move-to-workspace:2"
+"Mod+Shift+3" = "window-move-to-workspace:3"
+"Mod+Shift+4" = "window-move-to-workspace:4"
+"Mod+Shift+5" = "window-move-to-workspace:5"
+"Mod+Shift+6" = "window-move-to-workspace:6"
+"Mod+Shift+7" = "window-move-to-workspace:7"
+"Mod+Shift+8" = "window-move-to-workspace:8"
+"Mod+Shift+9" = "window-move-to-workspace:9"
+"Mod+Shift+0" = "window-move-to-workspace:10"
+
+# Workspace cycling with the wheel (was Mod+mouse_up/down, e+1/e-1)
+"Mod+WheelDown" = "workspace-next"
+"Mod+WheelUp"   = "workspace-previous"
+
+# Screenshots — noctalia-native (flameshot purged: grim 1.4 rejects every -g
+# geometry and its daemon swallowed invocations). Print = region select ->
+# clipboard + ~/Pictures; Shift+Print = annotate overlay (F/Freeze captures the
+# background, draw, copy/save); Mod+Shift+Print = focused monitor fullscreen.
+"Print"         = { action = "spawn:sh -c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 noctalia msg screenshot-region'", repeat = false }  # region select (default)
+"Shift+Print"   = { action = "spawn:sh -c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 noctalia msg annotate'", repeat = false }  # freeze (F) + draw toolbar
+"Mod+Shift+Print" = { action = "spawn:sh -c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 noctalia msg screenshot-fullscreen'", repeat = false }  # focused monitor -> clipboard + ~/Pictures
+# NOTE: hyprland used Mod+SHIFT+S for the region grab; Umbriel example uses it
+# for a screencapture submap. Shift+Print covers it. Set one you prefer.
+
+# Clipboard history (was Mod+Shift+V)
+"Mod+Shift+V" = { action = "spawn:sh -c 'cliphist list | fuzzel --dmenu | cliphist decode | wl-copy'", repeat = false }
+
+# Media keys (repeat is on by default for binds in Umbriel)
+"XF86AudioRaiseVolume" = { action = "spawn:noctalia msg volume-up",   allow_when_locked = true }
+"XF86AudioLowerVolume" = { action = "spawn:noctalia msg volume-down", allow_when_locked = true }
+"XF86AudioMute"        = { action = "spawn:noctalia msg volume-mute", allow_when_locked = true }
+
+# Window resize: primary extent = width along the scroll axis, secondary = height.
+# Cycling steps through the built-in extent presets; repeat stays off (discrete steps).
+"Mod+Minus"       = { action = "window-cycle-primary-extent-back", repeat = false }
+"Mod+Equal"       = { action = "window-cycle-primary-extent", repeat = false }
+"Mod+Shift+Minus" = { action = "window-cycle-secondary-extent-back", repeat = false }
+"Mod+Shift+Equal" = { action = "window-cycle-secondary-extent", repeat = false }
+
+# NOTE (window drag/resize): hyprland used Mod+mouse:272 drag / mouse:273 resize.
+# Umbriel moves windows with Mod+Right-drag natively in every layout — no bind needed.
+
+# ---- Window rules (ported from hyprland window_rule) ----
+[[window_rule]]
+match.app_id = "^xdg-desktop-portal-kde$"
+default_floating = true
+
+[[window_rule]]
+match.app_id = "^(org\\.kde\\.dolphin|dolphin|thunar|nemo)$"
+default_floating = true
+default_floating_size_px = { width = 1000, height = 650 }
+
+[[window_rule]]
+match.app_id = "^(pavucontrol|blueman-manager|nm-connection-editor|yad|zenity)$"
+default_floating = true
+default_floating_size_px = { width = 700, height = 500 }
+
+[[window_rule]]
+match.title = "^(Open File|Save File|Select Folder)"
+default_floating = true
+default_floating_size_px = { width = 800, height = 600 }
+
+[[window_rule]]
+match.title = "^(Picture-in-Picture|Picture in picture|PiP)$"
+default_floating = true
+default_floating_size_px = { width = 400, height = 225 }
+default_pinned = true
+default_position = { x = 20, y = 20, anchor = "bottom_right" }
+
+[[window_rule]]
+match.title = "^About "
+default_floating = true
+default_floating_size_px = { width = 500, height = 400 }
+
+[[window_rule]]
+match.title = "^(Error|Warning|Alert)$"
+default_floating = true
+
+[[window_rule]]
+match.app_id = "^(vesktop|discord|org\\.telegram\\.desktop|telegramdesktop|slack)$"
+match.title = "(Settings|Preferences|Quick Switcher)"
+default_floating = true
+default_floating_size_px = { width = 900, height = 600 }
+
+[[window_rule]]
+match.app_id = "^dev\\.noctalia\\.Noctalia$"
+default_floating = true
+default_floating_size_px = { width = 1080, height = 920 }
+
+[[window_rule]]
+match.app_id = "^dev\\.noctalia\\.UmbrielSharePicker$"
+default_floating = true
+default_floating_size_px = { width = 800, height = 600 }
+
+# ---- Daily-driver parking (mirrors the manual layout of 2026-09-29) ----
+# Left monitor (HDMI-A-2): ws1 zen, ws2 zed, ws3 kitty.
+# Right monitor (DP-1):     ws1 zcode,            ws3 slack.
+# Integer default_workspace = one-based position on default_output.
+# match.at_startup = rules apply ONLY to the login autostart; mid-session
+# launches of these apps open focused on the current screen instead of
+# teleporting to their parked workspace.
+[[window_rule]]
+match.app_id = "^zen$"
+match.at_startup = true
+default_output = "HDMI-A-2"
+default_workspace = 1
+
+[[window_rule]]
+match.app_id = "^dev\\.zed\\.Zed$"
+match.at_startup = true
+default_output = "HDMI-A-2"
+default_workspace = 2
+
+[[window_rule]]
+match.app_id = "^kitty$"
+match.at_startup = true
+default_output = "HDMI-A-2"
+default_workspace = 3
+
+[[window_rule]]
+match.app_id = "^zcode$"
+match.at_startup = true
+default_output = "DP-1"
+default_workspace = 1
+
+[[window_rule]]
+match.app_id = "^slack$"
+match.at_startup = true
+default_output = "DP-1"
+default_workspace = 3
+
+[[window_rule]]
+match.app_id = "^Spotify$"
+match.at_startup = true
+default_output = "DP-1"
+default_workspace = 2
+
+# ---- Layer rules (noctalia bar/panels get blur; same as the shell needs) ----
+[[layer_rule]]
+match.namespace = "^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd|desktop-widget-[^\"]*)$"
+blur = true
+blur_ignore_alpha = 0.5
+blur_popups = true
+blur_optimized = false

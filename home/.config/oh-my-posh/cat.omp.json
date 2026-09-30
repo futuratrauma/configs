@@ -1,0 +1,83 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "final_space": true,
+  "version": 2,
+  "console_title_template": "{{ .Folder }}",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "separator": "",
+      "segments": [
+        {
+          "type": "session",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "foreground": "#0a0f0d",
+          "background": "#a97fd9",
+          "template": " {{ .UserName }}@{{ .HostName }} "
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "foreground": "#d8f5e3",
+          "background": "#1d3a2a",
+          "template": " {{ .Path }} ",
+          "properties": {
+            "style": "mixed",
+            "folder_icon": "",
+            "max_depth": 3
+          }
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "foreground": "#c9a0ff",
+          "background": "#221c2e",
+          "template": " {{ .HEAD }}{{ if .Working.Changed }} {{ .Working.String }}{{ end }} ",
+          "properties": {
+            "fetch_status": true
+          }
+        },
+        {
+          "type": "status",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "foreground": "#ffffff",
+          "background": "#8a2f55",
+          "template": " {{ .Code }} ",
+          "properties": {
+            "display": "error"
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "#4a6a58",
+          "template": "{{ .CurrentDate | date \"15:04\" }}"
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "newline": true,
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#45e0a8",
+          "template": ""
+        }
+      ]
+    }
+  ]
+}

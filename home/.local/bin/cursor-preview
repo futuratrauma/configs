@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Cycle the live cursor theme across all installed cursor themes.
+# Enter = next theme, q = keep current and exit (config already written; gsettings + env follow).
+set -u
+CFG="$HOME/.config/umbriel/config.toml"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus"
+
+# A cursor theme = an icon dir whose cursors/ subdir holds 40+ entries
+# (real themes ship ~100 named .cursor files + hashed aliases; icon packs have
+# a tiny "cursors" folder for folder icons only). Entries can be dirs OR files.
+mapfile -t THEMES < <(
+  for d in "$HOME/.local/share/icons"/* /usr/share/icons/*; do
+    [ -d "$d/cursors" ] || continue
+    n=$(find "$d/cursors" -mindepth 1 | wc -l)
+    [ "$n" -ge 40 ] && basename "$d"
+  done | sort -u
+)
+
+ORIG=$(sed -n 's/^theme = "\(.*\)"/\1/p' "$CFG" | head -1)
+ORIG_SIZE=$(sed -n '/^\[input.cursor\]/,/^\[/p' "$CFG" | sed -n 's/^size = //p' | head -1)
+
+apply() {
+  local t="$1"
+  sed -i "s/^theme = \"[^\"]*\"/theme = \"$t\"/; s/^XCURSOR_THEME = \"[^\"]*\"/XCURSOR_THEME = \"$t\"/" "$CFG"
+  gsettings set org.gnome.desktop.interface cursor-theme "$t" 2>/dev/null
+}
+
+echo "Previewing ${#THEMES[@]} cursor themes. Enter=next, q=keep, r=restore original ($ORIG)."
+trap 'apply "$ORIG"; echo "restored: $ORIG"; exit 0' INT
+
+for t in "${THEMES[@]}"; do
+  apply "$t"
+  printf '\033[1m%s\033[0m  (size %s) — Enter next / q keep / r restore\n' "$t" "$ORIG_SIZE"
+  IFS= read -r key
+  case "$key" in
+    q|Q) echo "keeping: $t — say the word and I'll re-copy config.toml into ~/configs"; exit 0 ;;
+    r|R) apply "$ORIG"; echo "restored: $ORIG"; exit 0 ;;
+  esac
+done
+apply "$ORIG"; echo "cycle finished, restored: $ORIG"

@@ -1,0 +1,14 @@
+# Local hand-maintained plugin source (path registration).
+
+[[plugin]]
+id = "ivan/bt-call-profile"
+name = "BT Call Profile"
+version = "0.2.0"
+updated_at = 1790670959
+added_at = 1790670959
+author = "ivan"
+license = "MIT"
+icon = "headphones"
+description = "Music/Call profile indicator for the Sony WH-CH720N."
+plugin_api = 18
+tags = ["audio", "bar", "hardware"]
