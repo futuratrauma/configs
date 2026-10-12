@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Restore the myhost desktop config bundle into $HOME. Run as your normal user, NOT root.
+# Restore the desktop config bundle into $HOME. Run as your normal user, NOT root.
 # Idempotent: pre-existing targets are moved aside to <path>.pre-restore-<ts> instead of being clobbered.
 set -euo pipefail
 

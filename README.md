@@ -1,6 +1,6 @@
 # futuratrauma/configs — desktop restore bundle
 
-Snapshot of the Wayland desktop on **myhost** (Debian 13 trixie, x86_64), taken **2026-09-29**,
+Snapshot of the Wayland desktop on **<hostname>** (Debian 13 trixie, x86_64), taken **2026-09-29**,
 updated **2026-09-30**:
 **umbriel** (compositor) + **noctalia** (shell/bar/dock), kitty, oh-my-posh, spicetify, BT
 A2DP↔HFP auto-switch stack, fonts, and the small hand-written scripts that make it all work.
