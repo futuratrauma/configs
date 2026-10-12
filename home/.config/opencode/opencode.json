@@ -1,0 +1,207 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "sglang-glm/GLM-5.3-Flash-think",
+  "share": "disabled",
+  "compaction": {
+    "auto": true,
+    "tail_turns": 15
+  },
+  "instructions": [
+    "https://raw.githubusercontent.com/JRedeker/opencode-shell-strategy/trunk/shell_strategy.md"
+  ],
+  "provider": {
+    "sglang-glm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "SGLang GLM (:30001)",
+      "options": {
+        "baseURL": "http://SGLANG_HOST:30001/v1"
+      },
+      "models": {
+        "GLM-5.3-Flash": {
+          "name": "GLM-5.3-Flash (SGLang :30001)",
+          "tool_call": true,
+          "attachment": true,
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 524288,
+            "output": 163840
+          },
+          "cost": {
+            "input": 2,
+            "output": 8,
+            "cache_read": 0.4
+          },
+          "options": {
+            "chat_template_kwargs": {
+              "thinking": {
+                "type": "disabled"
+              }
+            }
+          }
+        },
+        "GLM-5.3-Flash-think": {
+          "name": "GLM-5.3-Flash think (reasoning)",
+          "tool_call": true,
+          "attachment": true,
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 524288,
+            "output": 163840
+          },
+          "cost": {
+            "input": 2,
+            "output": 8,
+            "cache_read": 0.4
+          }
+        },
+        "GLM-5.3-Flash-quick": {
+          "name": "GLM-5.3-Flash quick (no thinking)",
+          "tool_call": true,
+          "attachment": true,
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 524288,
+            "output": 163840
+          },
+          "cost": {
+            "input": 2,
+            "output": 8,
+            "cache_read": 0.4
+          },
+          "options": {
+            "chat_template_kwargs": {
+              "thinking": {
+                "type": "disabled"
+              }
+            }
+          }
+        }
+      }
+    },
+    "sglang-qwen": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "SGLang Qwen (:30000)",
+      "options": {
+        "baseURL": "http://SGLANG_HOST:30000/v1"
+      },
+      "models": {
+        "Qwen3.8-Flash-Next": {
+          "name": "Qwen3.8-Flash-Next (SGLang :30000)",
+          "tool_call": true,
+          "attachment": true,
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 262144,
+            "output": 98304
+          },
+          "cost": {
+            "input": 0.5,
+            "output": 1.5,
+            "cache_read": 0.1
+          }
+        },
+        "Qwen3.8-Flash-Next-quick": {
+          "name": "Qwen3.8-Flash-Next quick (no thinking)",
+          "tool_call": true,
+          "attachment": true,
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 262144,
+            "output": 98304
+          },
+          "cost": {
+            "input": 0.5,
+            "output": 1.5,
+            "cache_read": 0.1
+          },
+          "options": {
+            "chat_template_kwargs": {
+              "enable_thinking": false
+            }
+          }
+        }
+      }
+    }
+  },
+  "agent": {
+    "general": {
+      "disable": true
+    },
+    "coder": {
+      "model": "sglang-glm/GLM-5.3-Flash-quick"
+    }
+  },
+  "permission": {
+    "bash": {
+      "*": "allow",
+      "sudo *": "ask",
+      "rm -rf *": "ask",
+      "git push*": "ask"
+    }
+  },
+  "mcp": {
+    "gitlab": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@zereight/mcp-gitlab"
+      ],
+      "enabled": true,
+      "environment": {
+        "GITLAB_API_URL": "https://gitlab.regula.work/api/v4"
+      }
+    }
+  },
+  "plugin": [
+    "@tarquinen/opencode-dcp@latest",
+    "opencode-notificator",
+    "opencode-models-discovery",
+    "cc-safety-net@latest"
+  ]
+}

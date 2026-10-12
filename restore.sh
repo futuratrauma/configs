@@ -39,6 +39,13 @@ place ".config/systemd/user/bt-call-autoswitch.service"
 echo "== noctalia live state =="
 place ".local/state/noctalia/settings.toml"
 
+echo "== opencode / agent configs =="
+place ".config/opencode"
+place ".claude/settings.json"
+
+echo "== monocode mono soul =="
+place ".local/share/com.monocode.desktop/monos/c4c650df-005b-4ae3-b8e9-191b2f8dcb25/SOUL.md"
+
 echo "== mime defaults / XDG menus / dbus overrides =="
 place ".config/mimeapps.list"
 place ".config/menus"
